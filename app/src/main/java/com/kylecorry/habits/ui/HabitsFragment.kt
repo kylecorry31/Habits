@@ -68,6 +68,9 @@ class HabitsFragment : BoundFragment<FragmentHabitsBinding>() {
             }
 
             itemBinding.root.setOnClickListener {
+                if (isComplete.isSatisfiedBy(habit)){
+                    return@setOnClickListener
+                }
                 Alerts.dialog(
                     requireContext(),
                     getString(R.string.complete_habit),
@@ -98,8 +101,13 @@ class HabitsFragment : BoundFragment<FragmentHabitsBinding>() {
         habitList.addLineSeparator()
 
         habitRepo.getHabits().observe(viewLifecycleOwner, {
-            habitList.setData(it.filter { it.lastCompletedOn == null || it.lastCompletedOn == LocalDate.now() }
-                .sortedBy { it.type })
+            val isComplete = HabitIsCompleteSpecification()
+
+            val habits = it.filter {
+                it.lastCompletedOn == LocalDate.now() || !isComplete.isSatisfiedBy(it)
+            }.sortedBy { it.type }
+
+            habitList.setData(habits)
         })
 
         binding.createBtn.setOnClickListener {
