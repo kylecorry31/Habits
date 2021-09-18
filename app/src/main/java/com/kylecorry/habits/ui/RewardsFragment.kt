@@ -42,7 +42,7 @@ class RewardsFragment : BoundFragment<FragmentRewardsBinding>() {
             }
             itemBinding.root.setOnClickListener {
                 val points = getPoints()
-                if (points > reward.cost) {
+                if (points >= reward.cost) {
                     Alerts.dialog(
                         requireContext(),
                         reward.name,
